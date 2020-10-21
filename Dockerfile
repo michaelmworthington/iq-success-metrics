@@ -1,12 +1,19 @@
-FROM python:3
+ARG ALT_DOCKER_REGISTRY=docker.io
+FROM $ALT_DOCKER_REGISTRY/python:3
 
 WORKDIR /usr/src/app
 
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+ARG ALT_PYPI_REGISTRY=https://pypi.org/simple
+RUN pip install --trusted-host host.docker.internal --no-cache-dir --index-url $ALT_PYPI_REGISTRY -r requirements.txt
 
-RUN apt-get update 
+#RUN rm /etc/apt/sources.list && \
+#    rm -f /var/lib/apt/lists/* && \
+#    echo deb http://host.docker.internal:8083/nexus/repository/apt-deb.debian.org-main-proxy/ buster main >> /etc/apt/sources.list && \
+#    echo deb http://host.docker.internal:8083/nexus/repository/apt-security.debian.org-busterupdates-proxy/ buster/updates main  >> /etc/apt/sources.list && \
+#    echo deb http://host.docker.internal:8083/nexus/repository/apt-deb.debian.org-busterupdates-proxy/ buster-updates main  >> /etc/apt/sources.list && \
+#    apt-get update 
 
 # Plotly depedencies
 RUN apt-get update && \
